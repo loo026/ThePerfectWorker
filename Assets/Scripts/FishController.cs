@@ -1,22 +1,41 @@
+﻿using UnityEditor.EditorTools;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class FishController : MonoBehaviour
 {
-    public delegate void CutEventHandler(FishController fish);
-    public static event CutEventHandler OnFishCut;
+/*    public delegate void CutEventHandler(FishController fish);
+    public static event CutEventHandler OnFishCut;*/
 
     [SerializeField] private Rigidbody fishHeadRb;
     [SerializeField] private Rigidbody fishBodyRb;
+    [SerializeField] private Vector3 cutPosition;
+    [SerializeField] private Vector3 recyclePosition;
 
+    private Vector3 headInitialPosition;
+    private Quaternion headInitialRotation;
+    private Vector3 bodyInitialPosition;
+    private Quaternion bodyInitialRotation;
 
     private bool isCut = false;
+    private FishManager fishManager;
+
+
+
 
 
     public void Start()
     {
         fishHeadRb.isKinematic = true;
         fishBodyRb.isKinematic = true;
+
+        fishManager = FindFirstObjectByType<FishManager>();
+
+    }
+
+    private void Update()
+    {
+        CheckRecycle();
     }
 
 
@@ -57,7 +76,17 @@ public class FishController : MonoBehaviour
             fishBodyRb.AddTorque(Vector3.up * 0.1f, ForceMode.Impulse);
         }
 
-
     }
+
+
+    private void CheckRecycle()
+    {
+        if (transform.position.x >= recyclePosition.x)
+        {
+            fishManager.RecycleFish(gameObject); 
+            Debug.Log("Fish recycled.");
+        }
+    }
+
 
 }
