@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class KnifeController : MonoBehaviour
@@ -21,6 +21,28 @@ public class KnifeController : MonoBehaviour
     {
         knifeAnimator.SetTrigger("Cut");        
     }
+
+
+    private void OnTriggerEnter(Collider other)
+    {
+
+        if (other.CompareTag("Fish"))
+        {
+            Debug.Log($"Triggered with {other.name}");
+
+            FishController fish = other.GetComponentInParent<FishController>();
+
+            if (fish == null)
+            {
+                Debug.Log("fish is null!");
+            }
+            else
+            {
+                fish.Cut();
+            }
+        }
+    }
+
 
 
     private void PlayRandomCuttingSound()
