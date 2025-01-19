@@ -20,6 +20,7 @@ public class FishManager : MonoBehaviour
         if (fish != null)
         {
             fish.transform.position = spawnPosition;
+
             fish.SetActive(true);
 
         }
@@ -28,6 +29,11 @@ public class FishManager : MonoBehaviour
    public void RecycleFish(GameObject fish)
     {
         fish.SetActive(false);
+        FishController fishController = fish.GetComponent<FishController>();
+        if (fishController != null)
+        {
+            fishController.ResetChildTransform();
+        }
         Debug.Log("Fish is now inactive.");
     }
 

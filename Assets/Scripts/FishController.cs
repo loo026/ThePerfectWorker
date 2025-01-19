@@ -22,12 +22,16 @@ public class FishController : MonoBehaviour
 
 
 
-
-
     public void Start()
     {
         fishHeadRb.isKinematic = true;
         fishBodyRb.isKinematic = true;
+
+        headInitialPosition = fishHeadRb.transform.localPosition;
+        headInitialRotation = fishHeadRb.transform.localRotation;
+
+        bodyInitialPosition = fishBodyRb.transform.localPosition;
+        bodyInitialRotation = fishBodyRb.transform.localRotation;
 
         fishManager = FindFirstObjectByType<FishManager>();
 
@@ -88,5 +92,20 @@ public class FishController : MonoBehaviour
         }
     }
 
+    public void ResetChildTransform()
+    {
 
+        fishHeadRb.transform.localPosition = headInitialPosition;
+        fishHeadRb.transform.localRotation = headInitialRotation;
+
+        fishBodyRb.transform.localPosition = bodyInitialPosition;
+        fishBodyRb.transform.localRotation = bodyInitialRotation;
+
+
+        fishHeadRb.isKinematic = true;
+        fishBodyRb.isKinematic = true;
+
+        isCut = false; 
+        Debug.Log("Fish has been reset.");
+    }
 }
