@@ -4,8 +4,9 @@ using UnityEngine.Events;
 
 public class FishController : MonoBehaviour
 {
-/*    public delegate void CutEventHandler(FishController fish);
-    public static event CutEventHandler OnFishCut;*/
+    public delegate void FishEvent(FishController fish);
+    public static event FishEvent OnFishArriveAtCutPosition;
+    public static event FishEvent OnFishCut;
 
     [SerializeField] private Rigidbody fishHeadRb;
     [SerializeField] private Rigidbody fishBodyRb;
@@ -20,7 +21,12 @@ public class FishController : MonoBehaviour
     private bool isCut = false;
     private FishManager fishManager;
 
-
+    private enum FishState
+    {
+        Moving,
+        Static
+    }
+    private FishState currentState = FishState.Moving;
 
     public void Start()
     {
@@ -40,19 +46,51 @@ public class FishController : MonoBehaviour
     private void Update()
     {
         CheckRecycle();
+        UpdateFishState();
+    }
+
+    private void UpdateFishState()
+    {
+        if (currentState == FishState.Moving) {
+            MoveFish();
+        }
+
+        if (!isCut && currentState != FishState.Static && transform.position.x > cutPosition.x) { 
+            currentState = FishState.Static;
+            OnFishArriveAtCutPosition.Invoke(this);
+         //   fishManager.NotifyFishAtCutPostion(this);
+        }
+    }
+
+    private void MoveFish()
+    {
+        float speed = 1.0f;
+        transform.position += transform.forward * speed*  Time.deltaTime;
+    }
+
+    public void SetMoving()
+    {
+        currentState = FishState.Moving;
+    }
+
+    public void SetStatic()
+    {
+        currentState = FishState.Static;
     }
 
 
     public void Cut()
     {
 
-        if (isCut)
+        if (isCut || currentState != FishState.Static)
         {
             return;
         }
         else
         {
             isCut = true;
+            OnFishCut?.Invoke(this);
+          //  fishManager.NotifyFishWasCut();
             fishHeadRb.isKinematic = false;
             fishBodyRb.isKinematic = false;
             ApplyForce();

@@ -282,7 +282,6 @@ GameObject:
   m_Component:
   - component: {fileID: 6204050964397581386}
   - component: {fileID: 7419269337844199295}
-  - component: {fileID: 5537364214314639561}
   m_Layer: 0
   m_Name: Fish
   m_TagString: Untagged
@@ -321,18 +320,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fishHeadRb: {fileID: 5139319980352980360}
   fishBodyRb: {fileID: 8386860663419786032}
-  cutPosition: {x: 0.148, y: 0, z: -0.693}
+  cutPosition: {x: 0.34, y: 0, z: -0.693}
   recyclePosition: {x: 4, y: 0, z: -0.693}
-  moveSpeed: 2
---- !u!114 &5537364214314639561
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6498189223104606278}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 55e7044f82c39c84eae310c2c9297a45, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
