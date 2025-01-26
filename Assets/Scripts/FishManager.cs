@@ -9,6 +9,9 @@ public class FishManager : MonoBehaviour
     private FishController currentCutFish = null; // fish wait to cut
     private bool isConveyorPaused = false;
 
+    [SerializeField] private ConveyorTextureScroller conveyorTextureScroller; 
+
+
     private void OnEnable()
     {
         FishController.OnFishArriveAtCutPosition += HandleFishArriveAtCutPos;
@@ -25,11 +28,19 @@ public class FishManager : MonoBehaviour
     void Start()
     {
         InvokeRepeating("SpawnFish", 1f, spawnInterval);
+
+        if (conveyorTextureScroller != null)
+        {
+            conveyorTextureScroller.enabled = true;
+        }
     }
 
 
     void SpawnFish()
     {
+        //if conveyor pause, don't spawn fish
+        if (isConveyorPaused) return;
+
         GameObject fishObj = ObjectPool.SharedInstance.GetPooledObject();
         if (fishObj != null)
         {
@@ -60,7 +71,6 @@ public class FishManager : MonoBehaviour
 
     public void RecycleFish(GameObject fishObj)
     {
-        //fish.SetActive(false);
         FishController fishController = fishObj.GetComponent<FishController>();
         fishObj.SetActive(false);
 
@@ -92,6 +102,11 @@ public class FishManager : MonoBehaviour
         {
             f.SetStatic();
         }
+
+        if (conveyorTextureScroller != null)
+        {
+            conveyorTextureScroller.enabled = false;
+        }
     }
 
 
@@ -104,6 +119,13 @@ public class FishManager : MonoBehaviour
             fishQueue.Dequeue();
             currentCutFish = fishQueue.Count > 0 ? fishQueue.Peek() : null;
             isConveyorPaused = false;
+
+
+            if (conveyorTextureScroller != null)
+            {
+                conveyorTextureScroller.enabled = true;
+            }
+
 
             foreach (var f in fishQueue)
             {

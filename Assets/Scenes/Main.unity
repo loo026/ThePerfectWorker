@@ -407,8 +407,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawnPosition: {x: -4, y: 0, z: -0.693}
-  recyclePosition: {x: 4, y: 0, z: 0.693}
-  spawnInterval: 4
+  spawnInterval: 3
+  conveyorTextureScroller: {fileID: 1043226270}
 --- !u!4 &702396728
 Transform:
   m_ObjectHideFlags: 0
@@ -627,7 +627,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pooledObjects: []
   objectToPool: {fileID: 6498189223104606278, guid: 707dce88c3d1d2b44b7af9b584b8bb97, type: 3}
-  amountToPool: 5
+  amountToPool: 4
 --- !u!4 &1672423508
 Transform:
   m_ObjectHideFlags: 0
@@ -1045,6 +1045,10 @@ PrefabInstance:
     - target: {fileID: 6498189223104606278, guid: 707dce88c3d1d2b44b7af9b584b8bb97, type: 3}
       propertyPath: m_Name
       value: Fish
+      objectReference: {fileID: 0}
+    - target: {fileID: 6498189223104606278, guid: 707dce88c3d1d2b44b7af9b584b8bb97, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
