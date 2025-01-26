@@ -7,7 +7,7 @@ public class FishManager : MonoBehaviour
     public float spawnInterval = 2f;
     private Queue<FishController> fishQueue = new Queue<FishController>(); // arrange fish order
     private FishController currentCutFish = null; // fish wait to cut
-
+    private bool isConveyorPaused = false;
 
     private void OnEnable()
     {
@@ -34,10 +34,21 @@ public class FishManager : MonoBehaviour
         if (fishObj != null)
         {
             fishObj.transform.position = spawnPosition;
-
             fishObj.SetActive(true);
+
             FishController fish = fishObj.GetComponent<FishController>();
-            fishQueue.Enqueue(fish); 
+            fishQueue.Enqueue(fish);
+
+
+            if (isConveyorPaused)
+            {
+                fish.SetStatic();
+            }
+            else
+            {
+                fish.SetMoving();
+            }
+
 
             // if there is no fish wait to cut, set 1st fish as it
             if (currentCutFish == null)
@@ -70,8 +81,13 @@ public class FishManager : MonoBehaviour
         return currentCutFish == fish;
     }
 
+
     private void HandleFishArriveAtCutPos(FishController fish)
     {
+        if (isConveyorPaused) return;
+
+        isConveyorPaused = true;// 暂停流水线
+
         foreach (var f in fishQueue)
         {
             f.SetStatic();
@@ -81,11 +97,13 @@ public class FishManager : MonoBehaviour
 
     private void HandledFishWasCut(FishController fish)
     {
+        if (!isConveyorPaused) return;
+
         if (fish == currentCutFish)
         {
             fishQueue.Dequeue();
             currentCutFish = fishQueue.Count > 0 ? fishQueue.Peek() : null;
-
+            isConveyorPaused = false;
 
             foreach (var f in fishQueue)
             {
