@@ -55,10 +55,11 @@ public class FishController : MonoBehaviour
             MoveFish();
         }
 
-        if (!isCut && currentState != FishState.Static && transform.position.x > cutPosition.x) { 
+        if (!isCut && currentState != FishState.Static && transform.position.x > cutPosition.x 
+            && fishManager.IsCurrentCutFish(this)) { 
+
             currentState = FishState.Static;
             OnFishArriveAtCutPosition.Invoke(this);
-         //   fishManager.NotifyFishAtCutPostion(this);
         }
     }
 
@@ -90,11 +91,13 @@ public class FishController : MonoBehaviour
         {
             isCut = true;
             OnFishCut?.Invoke(this);
-          //  fishManager.NotifyFishWasCut();
             fishHeadRb.isKinematic = false;
             fishBodyRb.isKinematic = false;
             ApplyForce();
             Debug.Log("Fish is cut!");
+
+            // set moving after cutting
+            SetMoving();
         }
     }
 

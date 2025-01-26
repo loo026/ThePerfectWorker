@@ -1,12 +1,13 @@
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class FishManager : MonoBehaviour
 {
     [SerializeField] private Vector3 spawnPosition;
-    [SerializeField] private Vector3 recyclePosition;
     public float spawnInterval = 2f;
-    private bool isAllStatic = false;
+    private Queue<FishController> fishQueue = new Queue<FishController>(); // arrange fish order
+    private FishController currentCutFish = null; // fish wait to cut
+
 
     private void OnEnable()
     {
@@ -23,41 +24,55 @@ public class FishManager : MonoBehaviour
 
     void Start()
     {
-        InvokeRepeating("SpawnFish",1f,2f);
+        InvokeRepeating("SpawnFish", 1f, spawnInterval);
     }
 
 
     void SpawnFish()
     {
-        GameObject fish = ObjectPool.SharedInstance.GetPooledObject();
-        if (fish != null)
+        GameObject fishObj = ObjectPool.SharedInstance.GetPooledObject();
+        if (fishObj != null)
         {
-            fish.transform.position = spawnPosition;
+            fishObj.transform.position = spawnPosition;
 
-            fish.SetActive(true);
+            fishObj.SetActive(true);
+            FishController fish = fishObj.GetComponent<FishController>();
+            fishQueue.Enqueue(fish); 
 
+            // if there is no fish wait to cut, set 1st fish as it
+            if (currentCutFish == null)
+            {
+                currentCutFish = fish;
+            }
         }
     }
 
-   public void RecycleFish(GameObject fish)
+    public void RecycleFish(GameObject fishObj)
     {
-        fish.SetActive(false);
-        FishController fishController = fish.GetComponent<FishController>();
-        if (fishController != null)
+        //fish.SetActive(false);
+        FishController fishController = fishObj.GetComponent<FishController>();
+        fishObj.SetActive(false);
+
+        if (fishQueue.Contains(fishController))
         {
-            fishController.ResetChildTransform();
+            fishQueue.Dequeue();
         }
+
+        fishController.ResetChildTransform();
+
+
         Debug.Log("Fish is now inactive.");
     }
 
+    public bool IsCurrentCutFish(FishController fish)
+    {
+        //check if it is the first order
+        return currentCutFish == fish;
+    }
 
     private void HandleFishArriveAtCutPos(FishController fish)
     {
-        if (isAllStatic) return;
-
-        isAllStatic = true;
-        FishController[] allFish = FindObjectsByType<FishController>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-        foreach (var f in allFish)
+        foreach (var f in fishQueue)
         {
             f.SetStatic();
         }
@@ -66,37 +81,17 @@ public class FishManager : MonoBehaviour
 
     private void HandledFishWasCut(FishController fish)
     {
-        if (!isAllStatic) return;
-
-        isAllStatic = false;
-        FishController[] allFish = FindObjectsByType<FishController>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-        foreach (var f in allFish)
+        if (fish == currentCutFish)
         {
-            f.SetMoving();
+            fishQueue.Dequeue();
+            currentCutFish = fishQueue.Count > 0 ? fishQueue.Peek() : null;
+
+
+            foreach (var f in fishQueue)
+            {
+                f.SetMoving();
+            }
         }
+
     }
-
-/*    public void NotifyFishAtCutPostion(FishController fish)
-    {
-        if (isAllStatic) return;
-
-        isAllStatic = true;
-        FishController[] allFish = FindObjectsByType<FishController>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-        foreach (var f in allFish)
-        {
-            f.SetStatic();
-        }
-    }
-
-    public void NotifyFishWasCut()
-    {
-        if(!isAllStatic) return;
-
-        isAllStatic = false;
-        FishController[] allFish = FindObjectsByType<FishController>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-        foreach (var f in allFish)
-        {
-            f.SetMoving();
-        }
-    }*/
 }
