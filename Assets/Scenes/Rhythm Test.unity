@@ -406,9 +406,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95f15bf72fb4f0847a0ccd6b5cf38c22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  audioSource: {fileID: 1402768235}
+  peakData: {fileID: 11400000, guid: 1508c458bd1d61846a5566dda95eb571, type: 2}
   spawnPosition: {x: -4, y: 0, z: -0.693}
-  spawnInterval: 3
-  conveyorTextureScroller: {fileID: 1043226270}
 --- !u!4 &702396728
 Transform:
   m_ObjectHideFlags: 0
@@ -589,7 +589,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1043226265}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f9b9b0b01944659408300e087d097842, type: 3}
   m_Name: 
@@ -731,8 +731,8 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: ae577e9c296de7b4586b0af33ab36c64, type: 3}
-  m_Resource: {fileID: 8300000, guid: ae577e9c296de7b4586b0af33ab36c64, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 1be3c07d60200c641b2c53fd84d40628, type: 3}
+  m_Resource: {fileID: 8300000, guid: 1be3c07d60200c641b2c53fd84d40628, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -864,7 +864,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pooledObjects: []
   objectToPool: {fileID: 6498189223104606278, guid: 707dce88c3d1d2b44b7af9b584b8bb97, type: 3}
-  amountToPool: 4
+  amountToPool: 30
 --- !u!4 &1672423508
 Transform:
   m_ObjectHideFlags: 0
@@ -897,7 +897,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &2120921144
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -912,9 +912,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   audioSource: {fileID: 1402768235}
   sampleSize: 128
-  threshold: 0.2
-  minBeatInterval: 0.3
-  beatColorController: {fileID: 2120921146}
+  threshold: 0.1
+  minBeatInterval: 0.2
 --- !u!4 &2120921145
 Transform:
   m_ObjectHideFlags: 0

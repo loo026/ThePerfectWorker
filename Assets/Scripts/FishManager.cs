@@ -3,135 +3,87 @@ using UnityEngine;
 
 public class FishManager : MonoBehaviour
 {
+    [Header("Audio & Peak Data")]
+    public AudioSource audioSource;
+    public PeakData peakData;  // 在 Inspector 中拖入你事先生成并写好峰值数据的 PeakData.asset
+
+    [Header("Spawn Settings")]
     [SerializeField] private Vector3 spawnPosition;
-    public float spawnInterval = 2f;
-    private Queue<FishController> fishQueue = new Queue<FishController>(); // arrange fish order
-    private FishController currentCutFish = null; // fish wait to cut
-    private bool isConveyorPaused = false;
 
-    [SerializeField] private ConveyorTextureScroller conveyorTextureScroller; 
+    // 如果你想保留每条鱼的顺序管理，就维持这个队列
+    private Queue<FishController> fishQueue = new Queue<FishController>();
 
+    // 用来遍历 peakData.peaks
+    private int currentPeakIndex = 0;
 
-    private void OnEnable()
+    private void Start()
     {
-        FishController.OnFishArriveAtCutPosition += HandleFishArriveAtCutPos;
-        FishController.OnFishCut += HandledFishWasCut;
-    }
-
-    private void OnDisable()
-    {
-        FishController.OnFishArriveAtCutPosition -= HandleFishArriveAtCutPos;
-        FishController.OnFishCut -= HandledFishWasCut;
-    }
-
-
-    void Start()
-    {
-        InvokeRepeating("SpawnFish", 1f, spawnInterval);
-
-        if (conveyorTextureScroller != null)
+        // 开始播放音频
+        if (audioSource != null)
         {
-            conveyorTextureScroller.enabled = true;
+            audioSource.Play();
+        }
+        else
+        {
+            Debug.LogError("AudioSource not assigned!");
         }
     }
 
-
-    void SpawnFish()
+    private void Update()
     {
-        //if conveyor pause, don't spawn fish
-        if (isConveyorPaused) return;
+        // 如果没有峰值数据，就别执行
+        if (peakData == null || peakData.peaks == null || peakData.peaks.Length == 0) return;
 
+        // 如果已经到达数组末尾，也不再生成
+        if (currentPeakIndex >= peakData.peaks.Length) return;
+
+        // 当前音乐播放到的时间（秒）
+        float currentTime = audioSource.time;
+
+        // 检查是否到达下一个峰值时间
+        float nextPeakTime = peakData.peaks[currentPeakIndex];
+        if (currentTime >= nextPeakTime)
+        {
+            // 到达峰值 -> 生成鱼
+            SpawnFish();
+            currentPeakIndex++;
+        }
+    }
+
+    private void SpawnFish()
+    {
+        // 从对象池获取对象
         GameObject fishObj = ObjectPool.SharedInstance.GetPooledObject();
-        if (fishObj != null)
+        if (fishObj == null)
         {
-            fishObj.transform.position = spawnPosition;
-            fishObj.SetActive(true);
-
-            FishController fish = fishObj.GetComponent<FishController>();
-            fishQueue.Enqueue(fish);
-
-
-            if (isConveyorPaused)
-            {
-                fish.SetStatic();
-            }
-            else
-            {
-                fish.SetMoving();
-            }
-
-
-            // if there is no fish wait to cut, set 1st fish as it
-            if (currentCutFish == null)
-            {
-                currentCutFish = fish;
-            }
+            Debug.LogWarning("No pooled object available!");
+            return;
         }
+
+        // 放到指定位置，并激活
+        fishObj.transform.position = spawnPosition;
+        fishObj.SetActive(true);
+
+        // 如果你还想管理鱼队列
+        FishController fishController = fishObj.GetComponent<FishController>();
+        fishQueue.Enqueue(fishController);
     }
 
+    // 这个方法用来回收鱼
     public void RecycleFish(GameObject fishObj)
     {
+        // 不改变对象池逻辑
         FishController fishController = fishObj.GetComponent<FishController>();
         fishObj.SetActive(false);
 
+        // 如果队列里存在这条鱼，则出队
         if (fishQueue.Contains(fishController))
         {
             fishQueue.Dequeue();
         }
 
+        // 重置鱼内部状态
         fishController.ResetChildTransform();
-
-
         Debug.Log("Fish is now inactive.");
-    }
-
-    public bool IsCurrentCutFish(FishController fish)
-    {
-        //check if it is the first order
-        return currentCutFish == fish;
-    }
-
-
-    private void HandleFishArriveAtCutPos(FishController fish)
-    {
-        if (isConveyorPaused) return;
-
-        isConveyorPaused = true;// 暂停流水线
-
-        foreach (var f in fishQueue)
-        {
-            f.SetStatic();
-        }
-
-        if (conveyorTextureScroller != null)
-        {
-            conveyorTextureScroller.enabled = false;
-        }
-    }
-
-
-    private void HandledFishWasCut(FishController fish)
-    {
-        if (!isConveyorPaused) return;
-
-        if (fish == currentCutFish)
-        {
-            fishQueue.Dequeue();
-            currentCutFish = fishQueue.Count > 0 ? fishQueue.Peek() : null;
-            isConveyorPaused = false;
-
-
-            if (conveyorTextureScroller != null)
-            {
-                conveyorTextureScroller.enabled = true;
-            }
-
-
-            foreach (var f in fishQueue)
-            {
-                f.SetMoving();
-            }
-        }
-
     }
 }

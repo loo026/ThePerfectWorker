@@ -5,12 +5,11 @@ using UnityEngine.Events;
 public class FishController : MonoBehaviour
 {
     public delegate void FishEvent(FishController fish);
-    public static event FishEvent OnFishArriveAtCutPosition;
     public static event FishEvent OnFishCut;
 
     [SerializeField] private Rigidbody fishHeadRb;
     [SerializeField] private Rigidbody fishBodyRb;
-    [SerializeField] private Vector3 cutPosition;
+ //   [SerializeField] private Vector3 cutPosition;
     [SerializeField] private Vector3 recyclePosition;
 
     private Vector3 headInitialPosition;
@@ -21,12 +20,6 @@ public class FishController : MonoBehaviour
     private bool isCut = false;
     private FishManager fishManager;
 
-    private enum FishState
-    {
-        Moving,
-        Static
-    }
-    private FishState currentState = FishState.Moving;
 
     public void Start()
     {
@@ -46,22 +39,9 @@ public class FishController : MonoBehaviour
     private void Update()
     {
         CheckRecycle();
-        UpdateFishState();
+        MoveFish();
     }
 
-    private void UpdateFishState()
-    {
-        if (currentState == FishState.Moving) {
-            MoveFish();
-        }
-
-        if (!isCut && currentState != FishState.Static && transform.position.x > cutPosition.x 
-            && fishManager.IsCurrentCutFish(this)) { 
-
-            currentState = FishState.Static;
-            OnFishArriveAtCutPosition.Invoke(this);
-        }
-    }
 
     private void MoveFish()
     {
@@ -69,21 +49,12 @@ public class FishController : MonoBehaviour
         transform.position += transform.forward * speed*  Time.deltaTime;
     }
 
-    public void SetMoving()
-    {
-        currentState = FishState.Moving;
-    }
-
-    public void SetStatic()
-    {
-        currentState = FishState.Static;
-    }
 
 
     public void Cut()
     {
 
-        if (isCut || currentState != FishState.Static)
+        if (isCut)
         {
             return;
         }
@@ -96,8 +67,6 @@ public class FishController : MonoBehaviour
             ApplyForce();
             Debug.Log("Fish is cut!");
 
-            // set moving after cutting
-            SetMoving();
         }
     }
 
