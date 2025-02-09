@@ -596,6 +596,50 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scrollSpeed: 0.5
   conveyorRenderer: {fileID: 1043226267}
+--- !u!1 &1074210989
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1074210991}
+  - component: {fileID: 1074210990}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1074210990
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1074210989}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ace3a358fdfdcb448a2cb7e61c4b42b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1074210991
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1074210989}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.0490595, y: -0.030274773, z: 2.0165322}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1101881411
 GameObject:
   m_ObjectHideFlags: 0
@@ -914,6 +958,8 @@ MonoBehaviour:
   sampleSize: 128
   threshold: 0.1
   minBeatInterval: 0.2
+  lastBeatTime: 0
+  spectrumData: []
 --- !u!4 &2120921145
 Transform:
   m_ObjectHideFlags: 0
@@ -942,9 +988,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetRenderer: {fileID: 1101881413}
+  mat: {fileID: 0}
   normalIntensity: 0
   beatIntensity: 3
   fadeSpeed: 2
+  currentIntensity: 0
 --- !u!1 &67728467466992412
 GameObject:
   m_ObjectHideFlags: 0
@@ -1387,3 +1435,4 @@ SceneRoots:
   - {fileID: 1402768236}
   - {fileID: 2120921145}
   - {fileID: 1101881415}
+  - {fileID: 1074210991}
